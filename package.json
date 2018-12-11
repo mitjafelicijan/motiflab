@@ -1,0 +1,19 @@
+{
+  "name": "motiflab",
+  "version": "1.0.0",
+  "description": "UI components lab",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mitjafelicijan/motiflab.git"
+  },
+  "author": "Mitja Felicijan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mitjafelicijan/motiflab/issues"
+  },
+  "homepage": "https://github.com/mitjafelicijan/motiflab#readme"
+}
