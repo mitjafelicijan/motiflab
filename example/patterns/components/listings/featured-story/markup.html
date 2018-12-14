@@ -1,0 +1,27 @@
+<article itemscope itemtype="http://schema.org/Article">
+  <div class="row">
+    <div class="col col--7-of-12">
+      <a href="#" rel="bookmark" itemprop="url">
+        <img src="https://via.placeholder.com/660x360">
+      </a>
+    </div>
+    <div class="col col--5-of-12">
+      <header>
+        <div class="alternativeHeadline" itemprop="alternativeHeadline">
+          {{ alternativeHeadline }}
+        </div>
+        <h2 class="headline" itemprop="headline">
+          <a rel="bookmark" itemprop="url" href="#">{{ headline }}</a>
+        </h2>
+        <div class="metadata">
+          <span>{{ diggs }} diggs</span>
+          <a itemprop="publisher copyrightHolder sourceOrganization provider" href="#">{{ publisher }}</a>
+          <a itemprop="keywords" rel="tag" href="#">{{ keywords }}</a>
+        </div>
+        <div class="description" itemprop="description">
+          {{ description }}
+        </div>
+      </header>
+    </div>
+  </div>
+</article>

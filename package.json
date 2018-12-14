@@ -1,19 +1,41 @@
 {
   "name": "motiflab",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "UI components lab",
-  "main": "index.js",
+  "main": "bin/motiflab",
+  "preferGlobal": true,
+  "bin": {
+    "motiflab": "./bin/motiflab",
+    "ml": "./bin/motiflab"
+  },
   "scripts": {
+    "start": "node ./bin/motiflab",
+    "dev": "forever -w ./bin/motiflab ./example/patterns",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "Mitja Felicijan",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mitjafelicijan/motiflab.git"
   },
-  "author": "Mitja Felicijan",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/mitjafelicijan/motiflab/issues"
   },
-  "homepage": "https://github.com/mitjafelicijan/motiflab#readme"
+  "homepage": "https://github.com/mitjafelicijan/motiflab#readme",
+  "keywords": [
+    "pattern",
+    "styleguide",
+    "front-end",
+    "cli"
+  ],
+  "dependencies": {
+    "colors": "^1.3.3",
+    "express": "^4.16.4",
+    "glob": "^7.1.3",
+    "optimist": "^0.6.1",
+    "portfinder": "^1.0.20",
+    "slugify": "^1.3.4",
+    "twig": "^1.12.0"
+  }
 }

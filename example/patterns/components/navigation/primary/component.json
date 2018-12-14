@@ -1,0 +1,13 @@
+{
+  "name": "Primary menu",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  "engine": "twig",
+  "display": {
+    "width": "100%"
+  },
+  "context": {
+    "post": {
+      "post_title": "kjdssflks"
+    }
+  }
+}

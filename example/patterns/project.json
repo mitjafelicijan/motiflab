@@ -1,0 +1,23 @@
+{
+  "client": {
+    "name": "Example",
+    "url": "https://example.com",
+    "logo": ""
+  },
+  "breakPoints": [
+    "320px",
+    "768px",
+    "100%"
+  ],
+  "assets": {
+    "css": [
+      "./example/assets/base.css"
+    ],
+    "js": [
+      "./example/assets/app.js"
+    ],
+    "images": [
+      "dir-of-images"
+    ]
+  }
+}
