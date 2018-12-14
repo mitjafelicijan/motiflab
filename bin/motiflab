@@ -162,8 +162,8 @@ const serve = async (port) => {
       const createResponse = (html) => {
         return `
           ${styles.join('')}
-          ${scripts.join('')}
           <div class="motif-element">${html}</div>
+          ${scripts.join('')}
         `;
       }
 
