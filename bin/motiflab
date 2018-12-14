@@ -111,7 +111,7 @@ const serve = async (port) => {
 
   const app = express();
   app.use(express.static(patternPath));
-  app.use(express.static('./frontend'));
+  app.use(express.static(`${__dirname}/../frontend`));
 
   app.get('/_/meta', async (req, res) => res.send(library));
   app.get('/_/render/:id', async (req, res) => {
