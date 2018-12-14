@@ -79,7 +79,7 @@ const encodeHTMLEntities = (str) => {
   return str;
 }
 
-const serve = async (port) => {
+const fetchLibrary = () => {
   let library = {
     groups: [],
     project: null
@@ -109,17 +109,22 @@ const serve = async (port) => {
 
   library.project = JSON.parse(fs.readFileSync(`${patternPath}project.json`, 'utf8'));
 
+  return library;
+}
+
+const serve = async (port) => {
   const app = express();
   app.use(express.static(patternPath));
   app.use(express.static(`${__dirname}/../frontend`));
 
-  app.get('/_/meta', async (req, res) => res.send(library));
+  app.get('/_/meta', async (req, res) => res.send(fetchLibrary()));
   app.get('/_/render/:id', async (req, res) => {
     let buff = Buffer.from(req.params.id, 'base64');
     let decodedPath = buff.toString('ascii');
+    let library = fetchLibrary();
 
     if (decodedPath.endsWith('/')) {
-      let markupContents = fs.readFileSync(`${decodedPath}markup.html`, 'utf8');
+      //let markupContents = fs.readFileSync(`${decodedPath}markup.html`, 'utf8');
       let componentMeta = JSON.parse(fs.readFileSync(`${decodedPath}component.json`, 'utf8'));
 
       let styles = [];
