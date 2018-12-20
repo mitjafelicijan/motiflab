@@ -4,6 +4,8 @@ Motiflab is a style guide tool for building components and is similar to Pattern
 
 Motiflab is focused around components and not atomic design, because it tends to be too fragmented. The basic idea behind Motiflab is to support many templating engines and make it easier for developer to preview and show components.
 
+![Motiflab](https://user-images.githubusercontent.com/296714/50259672-475aee80-0405-11e9-8af2-308e7c75cc5d.png)
+
 ## Installation
 
 Motiflab is written in NodeJS so installation is pretty simple.
@@ -37,8 +39,10 @@ options:
 If you installed it as `--save-dev` you can use it from `package.json` file.
 
 ```json
-"scripts": {
-  "motiflab": "motiflab ./example/components"
+{
+  "scripts": {
+    "motiflab": "motiflab ./example/components"
+  }
 }
 ```
 

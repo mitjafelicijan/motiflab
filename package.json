@@ -1,6 +1,6 @@
 {
   "name": "motiflab",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "UI components lab",
   "main": "bin/motiflab",
   "preferGlobal": true,
