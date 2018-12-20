@@ -1,0 +1,19 @@
+{
+  "name": "Example card",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  "file": "card.twig",
+  "engine": "twig",
+  "display": {
+    "width": "100%"
+  },
+  "context": {
+    "title": "twig card",
+    "elements": [
+      "Titanium",
+      "Vanadium",
+      "Chromium",
+      "Manganese",
+      "Iron"
+    ]
+  }
+}

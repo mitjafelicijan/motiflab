@@ -1,9 +1,0 @@
-{
-  "name": "Channel list",
-  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  "engine": "twig",
-  "display": {
-    "width": "100%"
-  },
-  "context": {}
-}

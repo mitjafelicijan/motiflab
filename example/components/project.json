@@ -1,0 +1,39 @@
+{
+  "client": {
+    "name": "Example",
+    "url": "https://example.com"
+  },
+  "breakPoints": [
+    {
+      "label": "Full width",
+      "width": "100%"
+    },
+    {
+      "label": "Large desktop",
+      "width": "1440px"
+    },
+    {
+      "label": "Medium desktop",
+      "width": "1280px"
+    },
+    {
+      "label": "Small desktop",
+      "width": "1024px"
+    },
+    {
+      "label": "Tablet",
+      "width": "768px"
+    },
+    {
+      "label": "Mobile",
+      "width": "360px"
+    }
+  ],
+  "assets": {
+    "css": [
+      "./example/assets/base.css"
+    ],
+    "js": [],
+    "images": []
+  }
+}

@@ -1,8 +1,8 @@
 <components>
 
-  <section if="{ groups.length > 0 }">
+  <section>
     <div each="{ group in groups }" class="group">
-      <h1>{ group.data.name }</h1>
+      <h1>{ group.label }</h1>
       <div each="{ component in group.components }" class="component">
         <a name="{ component.slug }">
           <h3>{ component.data.name }</h3>
@@ -11,18 +11,17 @@
         <p><u>Templating engine</u>: { component.data.engine }</p>
         <p><u>Description</u>: { component.data.description }</p>
 
-        <iframe id="iframe_{ component.id.substring(0,50) }" src="/_/render/{ component.id }" frameborder="0"
+        <iframe id="iframe_{ component.id.replace(/=/g, '') }" src="/_/render/{ component.id }" frameborder="0"
           data-width="{ component.data.display.width }" data-height="{ component.data.display.height }">
         </iframe>
 
         <div class="tab-list">
-          <!--<button data-id="html">Rendered HTML</button>-->
-          <button data-id="raw">Raw Template</button>
-          <button data-id="context">Data & Context</button>
+          <button data-action="raw">Raw Template</button>
+          <button data-action="context">Data & Context</button>
+          <button data-action="open">Open in new window</button>
         </div>
 
         <div class="tab-content">
-          <pre id="html" class="prettyprint linenums language-html">{ component.raw }</pre>
           <pre id="raw" class="prettyprint linenums language-html">{ component.raw }</pre>
           <pre id="context" class="prettyprint linenums language-json">{ JSON.stringify(component.data, undefined, 2) }</pre>
         </div>
@@ -48,21 +47,25 @@
       });
 
       window.addEventListener('message', (evt) => {
-        document.querySelector(`#${evt.data.id}`).style.height = `${evt.data.height + 30}px`;
+        document.querySelector(`#${evt.data.id}`).style.height = `${evt.data.height}px`;
       })
 
       document.querySelectorAll('.tab-list button').forEach(button => {
         button.addEventListener('click', (evt) => {
-          let tabs = evt.target.parentNode.parentNode.querySelector('.tab-content');
-          let selectedTab = tabs.querySelector(`#${evt.target.dataset.id}`);
-          let allowShow = selectedTab.style.display == 'block' ? false : true;
+          if (evt.target.dataset.action == 'open') {
+            window.open(evt.target.parentNode.parentNode.querySelector('iframe').src)
+          } else {
+            let tabs = evt.target.parentNode.parentNode.querySelector('.tab-content');
+            let selectedTab = tabs.querySelector(`#${evt.target.dataset.action}`);
+            let allowShow = selectedTab.style.display == 'block' ? false : true;
 
-          tabs.querySelectorAll('pre').forEach(tab => {
-            tab.style.display = 'none';
-          });
+            tabs.querySelectorAll('pre').forEach(tab => {
+              tab.style.display = 'none';
+            });
 
-          if (allowShow) {
-            selectedTab.style.display = 'block';
+            if (allowShow) {
+              selectedTab.style.display = 'block';
+            }
           }
         });
       });
@@ -101,7 +104,7 @@
       display: none;
       max-width: 100%;
       min-width: 320px;
-      transition: width .3s ease-in-out, left .3s ease-in-out;
+      /*transition: width .3s ease-in-out, left .3s ease-in-out;*/
     }
 
     h1 {

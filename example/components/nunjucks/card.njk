@@ -1,0 +1,9 @@
+<h3>{{ title }}</h3>
+
+<ul>
+  {% for element in elements %}
+  <li>{{ element }}</li>
+  {% endfor %}
+</ul>
+
+{% include "./partial.njk" %}

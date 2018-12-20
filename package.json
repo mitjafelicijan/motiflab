@@ -1,6 +1,6 @@
 {
   "name": "motiflab",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "UI components lab",
   "main": "bin/motiflab",
   "preferGlobal": true,
@@ -10,8 +10,7 @@
   },
   "scripts": {
     "start": "node ./bin/motiflab",
-    "dev": "forever -w ./bin/motiflab ./example/patterns",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "forever -w ./bin/motiflab ./example/components"
   },
   "author": "Mitja Felicijan",
   "license": "MIT",
@@ -33,6 +32,9 @@
     "colors": "^1.3.3",
     "express": "^4.16.4",
     "glob": "^7.1.3",
+    "handlebars": "^4.0.12",
+    "mustache": "^3.0.1",
+    "nunjucks": "^3.1.6",
     "optimist": "^0.6.1",
     "portfinder": "^1.0.20",
     "slugify": "^1.3.4",

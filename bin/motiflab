@@ -9,12 +9,19 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const slugify = require('slugify');
+
 const twig = require('twig');
+const nunjucks = require('nunjucks');
+const mustache = require('mustache');
+const handlebars = require('handlebars');
 
 const defaultPort = 7000;
 const defaultHost = '0.0.0.0';
 
 process.stdin.pipe(process.stdout);
+
+// templating engine settings
+twig.cache(false);
 
 if (argv.h || argv.help) {
   console.log([
@@ -81,35 +88,65 @@ const encodeHTMLEntities = (str) => {
 
 const fetchLibrary = () => {
   let library = {
-    groups: [],
-    project: null
+    groups: {},
+    project: JSON.parse(fs.readFileSync(`${patternPath}project.json`, 'utf8')),
   };
 
-  searchRecursive(patternPath, 'group.json').forEach(group => {
-    let components = [];
-    searchRecursive(path.dirname(group), 'component.json').forEach(component => {
-      let markupContents = fs.readFileSync(`${findPath(component)}markup.html`, 'utf8');
+  searchRecursive(patternPath, '.json').forEach(component => {
+    if (path.basename(component) != 'project.json') {
       let data = JSON.parse(fs.readFileSync(component, 'utf8'));
-      components.push({
-        fullPath: path.dirname(component),
-        id: Buffer.from(findPath(component)).toString('base64'),
-        slug: slugify(data.name, { lower: true }),
-        root: findPath(component),
-        raw: markupContents,
-        html: markupContents,
+      let raw = fs.readFileSync(`${path.dirname(component)}/${data.file}`, 'utf8');
+      let id = Buffer.from(component).toString('base64');
+      let groupName = path.dirname(component.split(patternPath.substr(1))[1]).replace(/\//g, ' » ');
+      let groupSlug = groupName.replace(/ » /g, '');
+
+      if (!(groupSlug in library.groups)) {
+        library.groups[groupSlug] = {
+          label: groupName,
+          components: [],
+        };
+      }
+
+      library.groups[groupSlug].components.push({
+        id: id,
         data: data,
-      })
-    });
-    library.groups.push({
-      fullPath: path.dirname(group),
-      data: JSON.parse(fs.readFileSync(group, 'utf8')),
-      components: components
-    })
+        raw: raw,
+        slug: slugify(`${groupName.replace(/ » /g, ' ')}-${data.name}`, { lower: true }),
+      });
+    }
   });
 
-  library.project = JSON.parse(fs.readFileSync(`${patternPath}project.json`, 'utf8'));
-
   return library;
+}
+
+const createResponse = (html, assets) => {
+  return `
+    ${assets.styles.join('')}
+    <div class="motif-component">${html}</div>
+    ${assets.scripts.join('')}
+  `;
+}
+
+const gatherAssets = (library, id) => {
+  let styles = [];
+  let scripts = [];
+
+  library.project.assets.css.forEach(css => {
+    styles.push(`<style>${fs.readFileSync(css, 'utf8')}</style>`);
+  });
+
+  library.project.assets.js.forEach(js => {
+    scripts.push(`<script>${fs.readFileSync(js, 'utf8')}</script>`);
+  });
+
+  // post messages to parent
+  let iframeHeight = fs.readFileSync(`${__dirname}/../frontend/iframe-height.js`, 'utf8');
+  scripts.push(`<script>${iframeHeight.replace('{{id}}', id)}</script>`);
+
+  return {
+    styles: styles,
+    scripts: scripts,
+  };
 }
 
 const serve = async (port) => {
@@ -119,64 +156,36 @@ const serve = async (port) => {
 
   app.get('/_/meta', async (req, res) => res.send(fetchLibrary()));
   app.get('/_/render/:id', async (req, res) => {
-    let buff = Buffer.from(req.params.id, 'base64');
-    let decodedPath = buff.toString('ascii');
-    let library = fetchLibrary();
+    let id = Buffer.from(req.params.id, 'base64').toString('ascii');
+    if (id.endsWith('.json')) {
+      let library = fetchLibrary();
+      let iframeId = req.params.id.replace(/=/g, '');
+      let componentData = JSON.parse(fs.readFileSync(id, 'utf8'));
+      let assets = gatherAssets(library, iframeId);
 
-    if (decodedPath.endsWith('/')) {
-      //let markupContents = fs.readFileSync(`${decodedPath}markup.html`, 'utf8');
-      let componentMeta = JSON.parse(fs.readFileSync(`${decodedPath}component.json`, 'utf8'));
-
-      let styles = [];
-      let scripts = [];
-
-      library.project.assets.css.forEach(css => {
-        styles.push(`<style>${fs.readFileSync(css, 'utf8')}</style>`);
-      });
-
-      library.project.assets.js.forEach(js => {
-        scripts.push(`<script>${fs.readFileSync(js, 'utf8')}</script>`);
-      });
-
-      scripts.push(`
-        <script>
-
-        const actualHeight = () => {
-          let wrapperElement = document.querySelector('.motif-element');
-          return wrapperElement.offsetHeight;
-        };
-
-        const sendMessage = () => {
-          window.parent.postMessage({
-            "id": "iframe_${req.params.id.substring(0, 50)}",
-            "height": actualHeight()
-          }, "*");
-        };
-
-        window.addEventListener('load', (event) => {
-          sendMessage();
-        });
-
-        window.addEventListener('resize', (event) => {
-          sendMessage();
-        });
-
-        </script>
-      `);
-
-      const createResponse = (html) => {
-        return `
-          ${styles.join('')}
-          <div class="motif-element">${html}</div>
-          ${scripts.join('')}
-        `;
-      }
-
-      switch (componentMeta.engine) {
+      switch (componentData.engine) {
         case 'twig': {
-          twig.renderFile(`${decodedPath}markup.html`, componentMeta.context, (err, html) => {
-            res.send(createResponse(html)).end();
+          twig.renderFile(`${path.dirname(id)}/${componentData.file}`, componentData.context, (err, html) => {
+            res.send(createResponse(html, assets)).end();
           });
+          break;
+        }
+        case 'nunjucks': {
+          nunjucks.render(`${path.dirname(id)}/${componentData.file}`, componentData.context, function (err, html) {
+            res.send(createResponse(html, assets)).end();
+          });
+          break;
+        }
+        case 'mustache': {
+          let template = fs.readFileSync(`${path.dirname(id)}/${componentData.file}`, 'utf8');
+          let html = mustache.to_html(template, componentData.context);
+          res.send(createResponse(html, assets)).end();
+          break;
+        }
+        case 'handlebars': {
+          let template = handlebars.compile(fs.readFileSync(`${path.dirname(id)}/${componentData.file}`, 'utf8'));
+          let html = template(componentData.context);
+          res.send(createResponse(html, assets)).end();
           break;
         }
         default: {
@@ -184,9 +193,11 @@ const serve = async (port) => {
           break;
         }
       }
+
     } else {
       res.send('').end();
     }
+
   });
 
   app.listen(port, () => {
