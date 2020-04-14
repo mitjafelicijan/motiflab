@@ -10,7 +10,8 @@
   },
   "scripts": {
     "start": "node ./bin/motiflab",
-    "dev": "forever -w ./bin/motiflab ./example/components"
+    "dev": "forever -w ./bin/motiflab ./example/components",
+    "release": "np --any-branch"
   },
   "author": "Mitja Felicijan",
   "license": "MIT",
@@ -31,13 +32,16 @@
   "dependencies": {
     "colors": "^1.4.0",
     "express": "^4.17.1",
-    "glob": "^7.1.4",
-    "handlebars": "^4.4.2",
-    "mustache": "^3.1.0",
-    "nunjucks": "^3.2.0",
+    "glob": "^7.1.6",
+    "handlebars": "^4.7.6",
+    "mustache": "^4.0.1",
+    "nunjucks": "^3.2.1",
     "optimist": "^0.6.1",
-    "portfinder": "^1.0.24",
-    "slugify": "^1.3.5",
-    "twig": "^1.13.3"
+    "portfinder": "^1.0.25",
+    "slugify": "^1.4.0",
+    "twig": "^1.15.0"
+  },
+  "devDependencies": {
+    "np": "^4.0.2"
   }
 }

@@ -42,12 +42,16 @@
     addEventListener('load', (event) => {
 
       document.querySelectorAll('iframe').forEach(iframe => {
-        iframe.style.width = iframe.dataset.width;
-        iframe.style.display = 'block';
+        try {
+          iframe.style.width = iframe.dataset.width;
+          iframe.style.display = 'block';
+        } catch {}
       });
 
       window.addEventListener('message', (evt) => {
-        document.querySelector(`#${evt.data.id}`).style.height = `${evt.data.height}px`;
+        try {
+          document.querySelector(`#${evt.data.id}`).style.height = `${evt.data.height}px`;
+        } catch {}
       })
 
       document.querySelectorAll('.tab-list button').forEach(button => {
