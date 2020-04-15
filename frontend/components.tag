@@ -36,7 +36,7 @@
       const response = await fetch('/_/meta');
       const data = await response.json();
       this.groups = data.groups;
-
+      this.update();
 
       document.querySelectorAll('iframe').forEach(iframe => {
         try {
@@ -65,6 +65,7 @@
 
       document.querySelectorAll('.tab-list button').forEach(button => {
         button.addEventListener('click', (evt) => {
+          console.log(button)
           if (evt.target.dataset.action == 'open') {
             window.open(evt.target.parentNode.parentNode.querySelector('iframe').src)
           } else {
@@ -84,8 +85,6 @@
       });
 
       PR.prettyPrint();
-      this.update();
-
     });
 
   </script>
