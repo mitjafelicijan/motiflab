@@ -42,12 +42,13 @@
       this.groups = data.groups;
       this.breakPoints = data.project.breakPoints;
       this.update();
-    });
 
-    addEventListener('load', (event) => {
-      document.querySelector('#break-points').addEventListener('change', function (evt) {
-        document.querySelectorAll('iframe').forEach(iframe => {
-          iframe.style.width = evt.target.value;
+      addEventListener('load', (event) => {
+        document.querySelector('#break-points').addEventListener('change', function (evt) {
+          window.iframeWidth = evt.target.value;
+          document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.style.width = evt.target.value;
+          });
         });
       });
     });

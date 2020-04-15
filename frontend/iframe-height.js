@@ -1,19 +1,23 @@
 const actualHeight = () => {
-  let wrapperElement = document.querySelector('.motif-component');
+  let wrapperElement = document.querySelector(".motif-component");
   return wrapperElement.offsetHeight + 30;
 };
 
 const sendMessage = () => {
-  window.parent.postMessage({
-    "id": "iframe_{{id}}",
-    "height": actualHeight()
-  }, "*");
+  window.parent.postMessage(
+    {
+      method: "resize-iframe",
+      id: "iframe_{{id}}",
+      height: actualHeight(),
+    },
+    "*"
+  );
 };
 
-window.addEventListener('load', (event) => {
+window.addEventListener("DOMContentLoaded", (event) => {
   sendMessage();
 });
 
-window.addEventListener('resize', (event) => {
+window.addEventListener("resize", (event) => {
   sendMessage();
 });

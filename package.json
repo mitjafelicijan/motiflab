@@ -11,6 +11,7 @@
   "scripts": {
     "start": "node ./bin/motiflab",
     "dev": "forever -w ./bin/motiflab ./example/components",
+    "sandbox": "forever -w ./bin/motiflab ./sandbox/components",
     "release": "np --any-branch"
   },
   "author": "Mitja Felicijan",
@@ -30,6 +31,8 @@
     "cli"
   ],
   "dependencies": {
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
     "colors": "^1.4.0",
     "express": "^4.17.1",
     "glob": "^7.1.6",

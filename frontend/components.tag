@@ -11,8 +11,8 @@
         <p><u>Templating engine</u>: { component.data.engine }</p>
         <p><u>Description</u>: { component.data.description }</p>
 
-        <iframe id="iframe_{ component.id.replace(/=/g, '') }" src="/_/render/{ component.id }" frameborder="0"
-          data-width="{ component.data.display.width }" data-height="{ component.data.display.height }">
+        <iframe id="iframe_{ component.id }" src="/_/render/{ component.id }" frameborder="0"
+          data-width="{ component.data.display.width }" style="height:500py" data-heights="{ component.data.display.height }">
         </iframe>
 
         <div class="tab-list">
@@ -36,22 +36,31 @@
       const response = await fetch('/_/meta');
       const data = await response.json();
       this.groups = data.groups;
-      this.update();
-    });
 
-    addEventListener('load', (event) => {
 
       document.querySelectorAll('iframe').forEach(iframe => {
         try {
           iframe.style.width = iframe.dataset.width;
           iframe.style.display = 'block';
-        } catch {}
+        } catch (error) {
+          console.log(error)
+        }
       });
 
       window.addEventListener('message', (evt) => {
-        try {
-          document.querySelector(`#${evt.data.id}`).style.height = `${evt.data.height}px`;
-        } catch {}
+
+        if (evt.data.method =="resize-iframe") {
+          const iframe = document.querySelector(`#${evt.data.id}`);
+          iframe.style.display = "block";
+          iframe.style.width = "100%";
+
+          try {
+            iframe.style.height = `${evt.data.height}px`;
+          } catch (error) {
+            console.log(error)
+          }
+        }
+
       })
 
       document.querySelectorAll('.tab-list button').forEach(button => {
@@ -75,7 +84,9 @@
       });
 
       PR.prettyPrint();
-    }, false);
+      this.update();
+
+    });
 
   </script>
 

@@ -1,44 +1,60 @@
 #!/usr/bin/env node
 
-'use strict';
+"use strict";
 
-const colors = require('colors/safe');
-const portFinder = require('portfinder');
-const argv = require('optimist').argv;
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const slugify = require('slugify');
+const colors = require("colors/safe");
+const portFinder = require("portfinder");
+const argv = require("optimist").argv;
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
+const slugify = require("slugify");
+const btoa = require("btoa");
+const atob = require("atob");
 
-const twig = require('twig');
-const nunjucks = require('nunjucks');
-const mustache = require('mustache');
-const handlebars = require('handlebars');
+const twig = require("twig");
+const nunjucks = require("nunjucks");
+const mustache = require("mustache");
+const handlebars = require("handlebars");
 
 const defaultPort = 7000;
-const defaultHost = '0.0.0.0';
+const defaultHost = "0.0.0.0";
 
 process.stdin.pipe(process.stdout);
+
+// text to base64 without padding
+const encode = (val) => {
+  val = btoa(val);
+  return val.replace(/={1,2}$/, "");
+};
+
+// base64 to text without padding
+const decode = (val) => {
+  val = val + Array(((4 - (val.length % 4)) % 4) + 1).join("=");
+  return atob(val);
+};
 
 // templating engine settings
 twig.cache(false);
 
 if (argv.h || argv.help) {
-  console.log([
-    'usage: motiflab [path] [options]',
-    '',
-    'options:',
-    `  -p --port    Port to use [${defaultPort}]`,
-    `  -a           Address to use [${defaultHost}]`,
-    '  -h --help    Print this list and exit.'
-  ].join('\n'));
+  console.log(
+    [
+      "usage: motiflab [path] [options]",
+      "",
+      "options:",
+      `  -p --port    Port to use [${defaultPort}]`,
+      `  -a           Address to use [${defaultHost}]`,
+      "  -h --help    Print this list and exit.",
+    ].join("\n")
+  );
   process.exit();
 }
 
 const port = argv.p || argv.port || parseInt(process.env.PORT, 10);
 const host = argv.a || defaultHost;
-let patternPath = argv._[0] || './';
-patternPath = patternPath.endsWith('/') ? patternPath : patternPath + '/'; // fix trailing slash for glob
+let patternPath = argv._[0] || "./";
+patternPath = patternPath.endsWith("/") ? patternPath : patternPath + "/"; // fix trailing slash for glob
 
 const searchRecursive = (dir, pattern) => {
   let results = [];
@@ -61,44 +77,50 @@ const findPath = (filePath) => {
   let result = null;
   let cleanPatternPath = patternPath;
 
-  if (cleanPatternPath.startsWith('.')) {
+  if (cleanPatternPath.startsWith(".")) {
     cleanPatternPath = cleanPatternPath.substr(1);
   }
 
   let pathParts = filePath.split(cleanPatternPath);
-  result = `${patternPath}${pathParts[1]}`.replace('component.json', '');
+  result = `${patternPath}${pathParts[1]}`.replace("component.json", "");
   return result;
 };
 
 const encodeHTMLEntities = (str) => {
   var entityPairs = [
-    { character: '&', html: '&amp;' },
-    { character: '<', html: '&lt;' },
-    { character: '>', html: '&gt;' },
-    { character: "'", html: '&apos;' },
-    { character: '"', html: '&quot;' },
+    { character: "&", html: "&amp;" },
+    { character: "<", html: "&lt;" },
+    { character: ">", html: "&gt;" },
+    { character: "'", html: "&apos;" },
+    { character: '"', html: "&quot;" },
   ];
 
   entityPairs.forEach(function (pair) {
-    var reg = new RegExp(pair.character, 'g');
+    var reg = new RegExp(pair.character, "g");
     str = str.replace(reg, pair.html);
   });
   return str;
-}
+};
 
 const fetchLibrary = () => {
   let library = {
     groups: {},
-    project: JSON.parse(fs.readFileSync(`${patternPath}project.json`, 'utf8')),
+    project: JSON.parse(fs.readFileSync(`${patternPath}project.json`, "utf8")),
   };
 
-  searchRecursive(patternPath, '.json').forEach(component => {
-    if (path.basename(component) != 'project.json') {
-      let data = JSON.parse(fs.readFileSync(component, 'utf8'));
-      let raw = fs.readFileSync(`${path.dirname(component)}/${data.file}`, 'utf8');
-      let id = Buffer.from(component).toString('base64');
-      let groupName = path.dirname(component.split(patternPath.substr(1))[1]).replace(/\//g, ' » ');
-      let groupSlug = groupName.replace(/ » /g, '');
+  searchRecursive(patternPath, ".json").forEach((component) => {
+    if (path.basename(component) != "project.json") {
+      let data = JSON.parse(fs.readFileSync(component, "utf8"));
+      let raw = fs.readFileSync(
+        `${path.dirname(component)}/${data.file}`,
+        "utf8"
+      );
+      //let id = Buffer.from(component).toString("base64");
+      let id = encode(component);
+      let groupName = path
+        .dirname(component.split(patternPath.substr(1))[1])
+        .replace(/\//g, " » ");
+      let groupSlug = groupName.replace(/ » /g, "");
 
       if (!(groupSlug in library.groups)) {
         library.groups[groupSlug] = {
@@ -111,126 +133,148 @@ const fetchLibrary = () => {
         id: id,
         data: data,
         raw: raw,
-        slug: slugify(`${groupName.replace(/ » /g, ' ')}-${data.name}`, { lower: true }),
+        slug: slugify(`${groupName.replace(/ » /g, " ")}-${data.name}`, {
+          lower: true,
+        }),
       });
     }
   });
 
   return library;
-}
+};
 
 const createResponse = (html, assets) => {
   return `
-    ${assets.styles.join('')}
+    ${assets.styles.join("")}
     <div class="motif-component">${html}</div>
-    ${assets.scripts.join('')}
+    ${assets.scripts.join("")}
   `;
-}
+};
 
 const gatherAssets = (library, id) => {
   let styles = [];
   let scripts = [];
 
-  library.project.assets.css.forEach(css => {
-    styles.push(`<style>${fs.readFileSync(css, 'utf8')}</style>`);
+  library.project.assets.css.forEach((css) => {
+    styles.push(`<style>${fs.readFileSync(css, "utf8")}</style>`);
   });
 
-  library.project.assets.js.forEach(js => {
-    scripts.push(`<script>${fs.readFileSync(js, 'utf8')}</script>`);
+  library.project.assets.js.forEach((js) => {
+    scripts.push(`<script>${fs.readFileSync(js, "utf8")}</script>`);
   });
 
   // post messages to parent
-  let iframeHeight = fs.readFileSync(`${__dirname}/../frontend/iframe-height.js`, 'utf8');
-  scripts.push(`<script>${iframeHeight.replace('{{id}}', id)}</script>`);
+  let iframeHeight = fs.readFileSync(
+    `${__dirname}/../frontend/iframe-height.js`,
+    "utf8"
+  );
+  scripts.push(`<script>${iframeHeight.replace("{{id}}", id)}</script>`);
 
   return {
     styles: styles,
     scripts: scripts,
   };
-}
+};
 
 const serve = async (port) => {
   const app = express();
   app.use(express.static(patternPath));
   app.use(express.static(`${__dirname}/../frontend`));
 
-  app.get('/_/meta', async (req, res) => res.send(fetchLibrary()));
-  app.get('/_/render/:id', async (req, res) => {
-    let id = Buffer.from(req.params.id, 'base64').toString('ascii');
-    if (id.endsWith('.json')) {
+  app.get("/_/meta", async (req, res) => res.send(fetchLibrary()));
+  app.get("/_/render/:id", async (req, res) => {
+    let id = decode(req.params.id);
+
+    if (id.endsWith(".json")) {
       let library = fetchLibrary();
-      let iframeId = req.params.id.replace(/=/g, '');
-      let componentData = JSON.parse(fs.readFileSync(id, 'utf8'));
+      let iframeId = req.params.id.replace(/=/g, "");
+      let componentData = JSON.parse(fs.readFileSync(id, "utf8"));
       let assets = gatherAssets(library, iframeId);
 
       switch (componentData.engine) {
-        case 'twig': {
-          twig.renderFile(`${path.dirname(id)}/${componentData.file}`, componentData.context, (err, html) => {
-            res.send(createResponse(html, assets)).end();
-          });
+        case "twig": {
+          twig.renderFile(
+            `${path.dirname(id)}/${componentData.file}`,
+            componentData.context,
+            (err, html) => {
+              res.send(createResponse(html, assets)).end();
+            }
+          );
           break;
         }
-        case 'nunjucks': {
-          nunjucks.render(`${path.dirname(id)}/${componentData.file}`, componentData.context, function (err, html) {
-            res.send(createResponse(html, assets)).end();
-          });
+        case "nunjucks": {
+          nunjucks.render(
+            `${path.dirname(id)}/${componentData.file}`,
+            componentData.context,
+            function (err, html) {
+              res.send(createResponse(html, assets)).end();
+            }
+          );
           break;
         }
-        case 'mustache': {
-          let template = fs.readFileSync(`${path.dirname(id)}/${componentData.file}`, 'utf8');
+        case "mustache": {
+          let template = fs.readFileSync(
+            `${path.dirname(id)}/${componentData.file}`,
+            "utf8"
+          );
           let html = mustache.to_html(template, componentData.context);
           res.send(createResponse(html, assets)).end();
           break;
         }
-        case 'handlebars': {
-          let template = handlebars.compile(fs.readFileSync(`${path.dirname(id)}/${componentData.file}`, 'utf8'));
+        case "handlebars": {
+          let template = handlebars.compile(
+            fs.readFileSync(`${path.dirname(id)}/${componentData.file}`, "utf8")
+          );
           let html = template(componentData.context);
           res.send(createResponse(html, assets)).end();
           break;
         }
         default: {
-          res.send('Template engine mismatch').end();
+          res.send("Template engine mismatch").end();
           break;
         }
       }
-
     } else {
-      res.send('').end();
+      res.send("").end();
     }
-
   });
 
   app.listen(port, () => {
-    console.log(colors.green(`listening on http://${host}:${port} from ${patternPath}`));
+    console.log(
+      colors.green(`listening on http://${host}:${port} from ${patternPath}`)
+    );
   });
-}
+};
 
 if (!port) {
   portFinder.basePort = defaultPort;
   portFinder.getPort(function (err, port) {
-    if (err) { throw err; }
+    if (err) {
+      throw err;
+    }
     serve(port);
   });
-}
-else {
+} else {
   serve(port);
 }
 
-if (process.platform === 'win32') {
-  require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
-  }).on('SIGINT', function () {
-    process.emit('SIGINT');
-  });
+if (process.platform === "win32") {
+  require("readline")
+    .createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    })
+    .on("SIGINT", function () {
+      process.emit("SIGINT");
+    });
 }
 
-process.on('SIGINT', function () {
-  console.log(colors.red('motiflab stopped.'));
+process.on("SIGINT", function () {
+  console.log(colors.red("motiflab stopped."));
   process.exit();
 });
 
-process.on('SIGTERM', function () {
-  console.log(colors.red('motiflab stopped.'));
+process.on("SIGTERM", function () {
+  console.log(colors.red("motiflab stopped."));
   process.exit();
 });
