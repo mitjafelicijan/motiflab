@@ -1,1 +1,1 @@
-console.log('injected script inside shadowdom');
+console.log('injected script inside shadowdom!!!');

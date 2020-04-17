@@ -10,6 +10,7 @@ const Express = require('express');
 const Glob = require('glob');
 const JSDOM = require('jsdom').JSDOM;
 const SHA1 = require('sha1');
+const Livereload = require('livereload');
 
 const colors = require('colors');
 
@@ -53,7 +54,7 @@ const loadComponents = (display = false) => {
       global.components.push({
         id: SHA1(component),
         file: component,
-        path: component.replace(global.workingDirectory, '').replace(global.options.source, ''),
+        path: `/components/${component.replace(global.workingDirectory, '').replace(global.options.source, '')}`,
         meta: JSON.parse(componentMeta),
         dom: componentDOM,
       });
@@ -111,6 +112,11 @@ const optionator = Optionator({
       type: 'Boolean',
       description: 'start server',
     },
+    {
+      option: 'reload',
+      type: 'Boolean',
+      description: 'autoreloads on css and javascript changes',
+    },
   ],
 });
 
@@ -132,8 +138,14 @@ try {
     loadProjectConfig();
     loadComponents(true);
 
-    const app = Express();
+    if (global.options.reload) {
+      const reloadServer = Livereload.createServer({
+        exts: ['json', 'js', 'css'],
+        debug: false,
+      }).watch(options.source);
+    }
 
+    const app = Express();
     app.use('/', Express.static(Path.join(global.scriptDirectory, '../frontend')));
     app.use('/components', Express.static(Path.join(global.workingDirectory, global.options.source, './')));
 
@@ -153,10 +165,12 @@ try {
     });
 
     app.listen(options.listen, () => {
-      console.log(`\nListening on http://0.0.0.0:${options.listen} from ${options.source}`);
+      console.log(
+        `\nListening on http://0.0.0.0:${options.listen} from ${options.source} ${
+          global.options.reload ? 'with reload on' : ''
+        }`
+      );
     });
-
-    //process.exit(1);
   }
 } catch (error) {
   console.log(optionator.generateHelp());

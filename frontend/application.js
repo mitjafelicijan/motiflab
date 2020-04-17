@@ -57,7 +57,10 @@ const componentTemplate = document.querySelector('#component');
 
       const ref = componentItemContent.contentWindow.document;
       ref.open('text/html', 'replace');
-      ref.write(template.render(component.meta.context));
+      ref.write(`
+        ${template.render(component.meta.context)}
+        <script src="//0.0.0.0:35729/livereload.js?snipver=1" async defer></script>
+      `);
       ref.close();
 
       for (const file of project.projectConfig.autoInject) {
