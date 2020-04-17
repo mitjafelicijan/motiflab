@@ -181,6 +181,11 @@ const serve = async (port) => {
   app.use(express.static(patternPath));
   app.use(express.static(`${__dirname}/../frontend`));
 
+  const { staticFolders } = JSON.parse(fs.readFileSync(`${patternPath}project.json`, "utf8"));
+  for await(const folder of Object.entries(staticFolders)) {
+    app.use(folder[0], express.static(path.join(process.cwd(),patternPath, folder[1])))
+  }
+
   app.get("/_/meta", async (req, res) => res.send(fetchLibrary()));
   app.get("/_/render/:id", async (req, res) => {
     let id = decode(req.params.id);
