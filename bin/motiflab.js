@@ -42,7 +42,7 @@ const loadComponents = (display = false) => {
 
   global.components = [];
   const componentFiles = Glob.sync(
-    Path.join(global.workingDirectory, global.options.source, 'components/**/*{.html,.twig}')
+    Path.join(global.workingDirectory, global.options.source, 'elements/**/*{.html,.twig}')
   );
   for (const component of componentFiles) {
     const dom = new JSDOM(FS.readFileSync(component, 'utf8'));
@@ -132,10 +132,12 @@ try {
     loadProjectConfig();
     loadComponents(true);
 
+    console.log(Path.join(global.workingDirectory, global.options.source, './elements'));
+
     const app = Express();
 
     app.use('/', Express.static(Path.join(global.scriptDirectory, '../frontend')));
-    app.use('/components', Express.static(Path.join(global.workingDirectory, global.options.source, './components')));
+    app.use('/components', Express.static(Path.join(global.workingDirectory, global.options.source, './')));
 
     console.log();
     for (const folder of Object.entries(projectConfig.static)) {
