@@ -38,8 +38,8 @@ const componentTemplate = document.querySelector('#component');
     componentItemHeader.innerText = component.meta.name;
     componentItem.append(componentItemHeader);
 
-    if (omponent.meta.description) {
-      if (omponent.meta.description.length > 0) {
+    if (component.meta.description) {
+      if (component.meta.description.length > 0) {
         const componentItemDescription = document.createElement('p');
         componentItemDescription.innerHTML = `Description: <span>${component.meta.description}</span>`;
         componentItem.append(componentItemDescription);
