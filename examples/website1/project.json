@@ -1,0 +1,10 @@
+{
+  "client": {
+    "name": "Example",
+    "url": "https://example.com"
+  },
+  "static": {
+    "/static": "./dist"
+  },
+  "autoInject": ["/static/style.css", "/static/script.js"]
+}

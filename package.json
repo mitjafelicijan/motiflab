@@ -5,13 +5,11 @@
   "main": "bin/motiflab",
   "preferGlobal": true,
   "bin": {
-    "motiflab": "./bin/motiflab",
-    "ml": "./bin/motiflab"
+    "motiflab": "./bin/motiflab.js",
+    "ml": "./bin/motiflab.js"
   },
   "scripts": {
-    "start": "node ./bin/motiflab",
-    "dev": "forever -w ./bin/motiflab ./example/components",
-    "sandbox": "forever -w ./bin/motiflab ./sandbox/components",
+    "start": "node ./bin/motiflab.js",
     "release": "np --any-branch"
   },
   "author": "Mitja Felicijan",
@@ -31,18 +29,13 @@
     "cli"
   ],
   "dependencies": {
-    "atob": "^2.1.2",
-    "btoa": "^1.2.1",
     "colors": "^1.4.0",
     "express": "^4.17.1",
     "glob": "^7.1.6",
-    "handlebars": "^4.7.6",
-    "mustache": "^4.0.1",
-    "nunjucks": "^3.2.1",
-    "optimist": "^0.6.1",
-    "portfinder": "^1.0.25",
-    "slugify": "^1.4.0",
-    "twig": "^1.15.0"
+    "jsdom": "^16.2.2",
+    "optionator": "^0.9.1",
+    "sha1": "^1.1.1",
+    "twig": "^1.15.1"
   },
   "devDependencies": {
     "np": "^4.0.2"

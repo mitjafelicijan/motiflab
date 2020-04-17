@@ -1,23 +1,20 @@
-const actualHeight = () => {
-  let wrapperElement = document.querySelector(".motif-component");
-  return wrapperElement.offsetHeight + 30;
+const script = document.currentScript;
+
+const getDocumentHeight = () => {
+  const body = document.body;
+  const html = document.documentElement;
+  return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
 };
 
 const sendMessage = () => {
   window.parent.postMessage(
     {
-      method: "resize-iframe",
-      id: "iframe_{{id}}",
-      height: actualHeight(),
+      method: 'resize-iframe',
+      id: script.dataset.id,
+      height: getDocumentHeight(),
     },
-    "*"
+    '*'
   );
 };
 
-window.addEventListener("DOMContentLoaded", (event) => {
-  sendMessage();
-});
-
-window.addEventListener("resize", (event) => {
-  sendMessage();
-});
+sendMessage();

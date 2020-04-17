@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css?family=Inconsolata:400,700|Roboto:300,400,500,700,900&amp;subset=latin-ext');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+  background-color: white;
+  outline: none;
+  text-decoration: none;
+  box-shadow: none;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+body {
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+}
+
+/********************************************************************** aside */
+
+aside {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 300px;
+  bottom: 0;
+  overflow: auto;
+  padding: 40px 20px;
+  border-right: 2px solid #eee;
+}
+
+aside nav a {
+  cursor: pointer;
+  display: block;
+  margin-block-end: 10px;
+  font-weight: 500;
+  color: #333;
+}
+
+/********************************************************************* client */
+
+aside .client {
+  margin-block-end: 40px;
+}
+
+aside .client h1 {
+  margin-block-end: 20px;
+}
+
+aside .client a {
+  color: #333;
+  font-weight: 500;
+}
+
+/*********************************************************************** main */
+
+main {
+  position: fixed;
+  left: 300px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  padding: 40px 20px;
+}
+
+/****************************************************************** component */
+
+main .component {
+  display: block;
+  margin-block-end: 40px;
+}
+
+main .component h3 {
+  margin-bottom: 10px;
+  font-size: 140%;
+  font-weight: 500;
+}
+
+main .component iframe {
+  border: 2px solid #eee;
+  width: 100%;
+  resize: both;
+  margin-block-start: 20px;
+  display: block;
+}
+
+main .component p {
+  color: #666;
+  margin-block-end: 10px;
+}
+
+main .component p span {
+  color: #000;
+}
+
+main .component a {
+  color: #000;
+  text-decoration: underline;
+}

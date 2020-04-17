@@ -3,49 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Motiflab</title>
 
-    <title>Motif Lab</title>
-
-    <link
-      href="https://fonts.googleapis.com/css?family=Inconsolata:400,700|Roboto:300,400,500,700,900&amp;subset=latin-ext"
-      rel="stylesheet"
-    />
-
-    <style>
-      * {
-        box-sizing: border-box;
-        background-color: transparent;
-        outline: none;
-        text-decoration: none;
-        box-shadow: none;
-        -moz-osx-font-smoothing: grayscale !important;
-        text-rendering: optimizeLegibility !important;
-        -webkit-font-smoothing: antialiased !important;
-      }
-      html,
-      body {
-        overflow: hidden;
-        font-family: "Roboto", sans-serif;
-        font-size: 15px;
-      }
-    </style>
+    <link rel="stylesheet" href="/application.css" />
   </head>
-
   <body>
-    <app></app>
+    <aside>
+      <div class="client">
+        <h1></h1>
+        <a href="#" target="_blank"></a>
+      </div>
+      <nav></nav>
+    </aside>
 
-    <script type="riot/tag" src="sidebar.tag"></script>
-    <script type="riot/tag" src="components.tag"></script>
-    <script type="riot/tag" src="app.tag"></script>
+    <main></main>
 
-    <script src="//cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/riot/3.13.2/riot+compiler.min.js"></script>
-
-    <script>
-      riot.compile(function () {
-        riot.mount("app");
-      });
-    </script>
+    <script src="/twig.min.js"></script>
+    <script src="/application.js" async></script>
   </body>
 </html>

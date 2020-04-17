@@ -28,12 +28,12 @@ After install you can run Motiflab by `motiflab ./example/components` where firs
 
 ```bash
 $ motiflab --help
-usage: motiflab [path] [options]
+Usage: motiflab [options]
 
-options:
-  -p --port    Port to use [7000]
-  -a           Address to use [0.0.0.0]
-  -h --help    Print this list and exit.
+  -h, --help       displays help
+  --source String  folder where components are located - default: ./
+  --listen Int     port on which service is listening - default: 7000
+  --serve          start server
 ```
 
 If you installed it as `--save-dev` you can use it from `package.json` file.
@@ -41,7 +41,7 @@ If you installed it as `--save-dev` you can use it from `package.json` file.
 ```json
 {
   "scripts": {
-    "motiflab": "motiflab ./example/components"
+    "motiflab": "motiflab --source examples/website1/ --serve"
   }
 }
 ```
