@@ -54,7 +54,7 @@ const loadComponents = (display = false) => {
       global.components.push({
         id: SHA1(component),
         file: component,
-        path: `/components/${component.replace(global.workingDirectory, '').replace(global.options.source, '')}`,
+        path: component.replace(global.workingDirectory, '').replace(global.options.source, ''),
         meta: JSON.parse(componentMeta),
         dom: componentDOM,
       });
@@ -147,9 +147,8 @@ try {
 
     const app = Express();
     app.use('/', Express.static(Path.join(global.scriptDirectory, '../frontend')));
-    app.use('/components', Express.static(Path.join(global.workingDirectory, global.options.source, './')));
+    app.use('/elements', Express.static(Path.join(global.workingDirectory, global.options.source, './elements')));
 
-    console.log();
     for (const folder of Object.entries(projectConfig.static)) {
       app.use(folder[0], Express.static(Path.join(global.workingDirectory, global.options.source, folder[1])));
     }
