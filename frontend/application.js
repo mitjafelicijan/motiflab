@@ -42,11 +42,11 @@ const componentTemplate = document.querySelector('#component');
     componentItemDescription.innerHTML = `Description: <span>${component.meta.description}</span>`;
     componentItem.append(componentItemDescription);
 
-    const componentItemOpenWindow = document.createElement('a');
-    componentItemOpenWindow.href = component.path;
-    componentItemOpenWindow.target = '_blank';
-    componentItemOpenWindow.innerText = 'Open component in new window';
-    componentItem.append(componentItemOpenWindow);
+    //const componentItemOpenWindow = document.createElement('a');
+    //componentItemOpenWindow.href = component.path;
+    //componentItemOpenWindow.target = '_blank';
+    //componentItemOpenWindow.innerText = 'Open component in new window';
+    //componentItem.append(componentItemOpenWindow);
 
     const componentItemContent = document.createElement('iframe');
     componentItemContent.dataset.id = `iframe-${component.id}`;
