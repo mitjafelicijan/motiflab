@@ -132,8 +132,6 @@ try {
     loadProjectConfig();
     loadComponents(true);
 
-    console.log(Path.join(global.workingDirectory, global.options.source, './elements'));
-
     const app = Express();
 
     app.use('/', Express.static(Path.join(global.scriptDirectory, '../frontend')));
