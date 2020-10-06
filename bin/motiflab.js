@@ -146,6 +146,7 @@ try {
     }
 
     const app = Express();
+    app.use(cors());
     app.use('/', Express.static(Path.join(global.scriptDirectory, '../frontend')));
     app.use('/elements', Express.static(Path.join(global.workingDirectory, global.options.source, './elements')));
 
@@ -165,8 +166,7 @@ try {
 
     app.listen(options.listen, () => {
       console.log(
-        `\nListening on http://0.0.0.0:${options.listen} from ${options.source} ${
-          global.options.reload ? 'with reload on' : ''
+        `\nListening on http://0.0.0.0:${options.listen} from ${options.source} ${global.options.reload ? 'with reload on' : ''
         }`
       );
     });
