@@ -12,6 +12,7 @@ const JSDOM = require('jsdom').JSDOM;
 const SHA1 = require('sha1');
 const Livereload = require('livereload');
 
+const cors = require('cors');
 const colors = require('colors');
 
 global.homeDirectory = OS.homedir();
@@ -164,7 +165,7 @@ try {
       });
     });
 
-    app.listen(options.listen, () => {
+    app.listen(options.listen, '0.0.0.0', () => {
       console.log(
         `\nListening on http://0.0.0.0:${options.listen} from ${options.source} ${global.options.reload ? 'with reload on' : ''
         }`
